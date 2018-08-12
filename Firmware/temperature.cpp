@@ -45,6 +45,11 @@ int target_temperature[EXTRUDERS] = { 0 };
 int target_temperature_bed = 0;
 int current_temperature_raw[EXTRUDERS] = { 0 };
 float current_temperature[EXTRUDERS] = { 0.0 };
+
+#ifdef PINDA_THERMISTOR
+int current_temperature_raw_pinda =  0 ;
+float current_temperature_pinda = 0.0;
+#endif //PINDA_THERMISTOR
 int current_temperature_bed_raw = 0;
 float current_temperature_bed = 0.0;
 #ifdef TEMP_SENSOR_1_AS_REDUNDANT
@@ -823,6 +828,34 @@ static float analog2tempBed(int raw) {
   #endif
 }
 
+#ifdef PINDA_THERMISTOR
+
+static float analog2tempPINDA(int raw) {
+
+	float celsius = 0;
+	byte i;
+
+	for (i = 1; i<BEDTEMPTABLE_LEN; i++)
+	{
+		if (PGM_RD_W(BEDTEMPTABLE[i][0]) > raw)
+		{
+			celsius = PGM_RD_W(BEDTEMPTABLE[i - 1][1]) +
+				(raw - PGM_RD_W(BEDTEMPTABLE[i - 1][0])) *
+				(float)(PGM_RD_W(BEDTEMPTABLE[i][1]) - PGM_RD_W(BEDTEMPTABLE[i - 1][1])) /
+				(float)(PGM_RD_W(BEDTEMPTABLE[i][0]) - PGM_RD_W(BEDTEMPTABLE[i - 1][0]));
+			break;
+		}
+	}
+
+	// Overflow: Set to last value in the table
+	if (i == BEDTEMPTABLE_LEN) celsius = PGM_RD_W(BEDTEMPTABLE[i - 1][1]);
+
+	return celsius;
+}
+
+
+#endif //PINDA_THERMISTOR
+
 /* Called to get the raw values into the the actual temperatures. The raw values are created in interrupt context,
     and this function is called from normal context as it is too slow to run in interrupts and will block the stepper routine otherwise */
 static void updateTemperaturesFromRawValues()
@@ -831,7 +864,10 @@ static void updateTemperaturesFromRawValues()
     {
         current_temperature[e] = analog2temp(current_temperature_raw[e], e);
     }
-    
+
+#ifdef PINDA_THERMISTOR
+	current_temperature_pinda = analog2tempBed(current_temperature_raw_pinda);
+#endif
 	current_temperature_bed = analog2tempBed(current_temperature_bed_raw);
 
     #ifdef TEMP_SENSOR_1_AS_REDUNDANT

@@ -39,8 +39,8 @@
   #define Z_MS2_PIN 67
   #define TEMP_BED_PIN 2
   #define TEMP_0_PIN 0
-  #define HEATER_1_PIN 7
-  #define TEMP_1_PIN 1
+  #define HEATER_1_PIN -1	// was 7
+  #define TEMP_1_PIN -1		// was 1, clash with PINDA_TEMP
   #define TEMP_2_PIN -1
   
 #ifndef DISABLE_MAX_ENDSTOPS
@@ -52,6 +52,9 @@
   #define Y_MAX_PIN -1
   #define Z_MAX_PIN -1
 #endif
+
+#define PINDA_THERMISTOR
+#define TEMP_PINDA_PIN          1 //A1
 
 #ifndef DISABLE_MIN_ENDSTOPS
   #define X_MIN_PIN 12
