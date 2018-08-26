@@ -47,7 +47,7 @@ int current_temperature_raw[EXTRUDERS] = { 0 };
 float current_temperature[EXTRUDERS] = { 0.0 };
 
 #ifdef PINDA_THERMISTOR
-int current_temperature_raw_pinda =  0 ;
+int current_temperature_pinda_raw =  0 ;
 float current_temperature_pinda = 0.0;
 #endif //PINDA_THERMISTOR
 int current_temperature_bed_raw = 0;
@@ -866,7 +866,7 @@ static void updateTemperaturesFromRawValues()
     }
 
 #ifdef PINDA_THERMISTOR
-	current_temperature_pinda = analog2tempBed(current_temperature_raw_pinda);
+	current_temperature_pinda = analog2tempPINDA(current_temperature_pinda_raw);
 #endif
 	current_temperature_bed = analog2tempBed(current_temperature_bed_raw);
 
@@ -998,11 +998,11 @@ void tp_init()
        DIDR2 |= 1<<(TEMP_1_PIN - 8); 
     #endif
   #endif
-  #if defined(TEMP_2_PIN) && (TEMP_2_PIN > -1)
-    #if TEMP_2_PIN < 8
-       DIDR0 |= 1 << TEMP_2_PIN; 
+  #if defined(TEMP_PINDA_PIN) && (TEMP_PINDA_PIN > -1)
+    #if TEMP_PINDA_PIN < 8
+       DIDR0 |= 1 << TEMP_PINDA_PIN; 
     #else
-       DIDR2 |= 1<<(TEMP_2_PIN - 8); 
+       DIDR2 |= 1<<(TEMP_PINDA_PIN - 8); 
     #endif
   #endif
   #if defined(TEMP_BED_PIN) && (TEMP_BED_PIN > -1)
@@ -1483,8 +1483,8 @@ ISR(TIMER0_COMPB_vect)
   static unsigned char temp_count = 0;
   static unsigned long raw_temp_0_value = 0;
   static unsigned long raw_temp_1_value = 0;
-#if defined(TEMP_2_PIN) && (TEMP_2_PIN > -1)
-  static unsigned long raw_temp_2_value = 0;
+#if defined(TEMP_PINDA_PIN) && (TEMP_PINDA_PIN > -1)
+  static unsigned long raw_temp_pinda_value = 0;
 #endif
   static unsigned long raw_temp_bed_value = 0;
   static unsigned char temp_state = 10;
@@ -1856,27 +1856,26 @@ ISR(TIMER0_COMPB_vect)
       #endif
       temp_state = 6;
       break;
-    case 6: // Prepare TEMP_2
-      #if defined(TEMP_2_PIN) && (TEMP_2_PIN > -1)
-        #if TEMP_2_PIN > 7
+    case 6: // Prepare TEMP_PINDA
+      #if defined(TEMP_PINDA_PIN) && (TEMP_PINDA_PIN > -1)
+        #if TEMP_PINDA_PIN > 7
           ADCSRB = 1<<MUX5;
         #else
           ADCSRB = 0;
         #endif
-        ADMUX = ((1 << REFS0) | (TEMP_2_PIN & 0x07));
+        ADMUX = ((1 << REFS0) | (TEMP_PINDA_PIN & 0x07));
         ADCSRA |= 1<<ADSC; // Start conversion
       #endif
       lcd_buttons_update();
       temp_state = 7;
       break;
-    case 7: // Measure TEMP_2
-      #if defined(TEMP_2_PIN) && (TEMP_2_PIN > -1)
-        raw_temp_2_value += ADC;
+    case 7: // Measure TEMP_PINDA
+      #if defined(TEMP_PINDA_PIN) && (TEMP_PINDA_PIN > -1)
+        raw_temp_pinda_value += ADC;
       #endif
-      temp_state = 8;//change so that Filament Width is also measured
-      
+      temp_state = 8;
       break;
-    case 8: //Prepare FILWIDTH 
+    case 8: // Prepare FILWIDTH 
      #if defined(FILWIDTH_PIN) && (FILWIDTH_PIN> -1) 
       #if FILWIDTH_PIN>7 
          ADCSRB = 1<<MUX5;
@@ -1925,8 +1924,8 @@ ISR(TIMER0_COMPB_vect)
 #ifdef TEMP_SENSOR_1_AS_REDUNDANT
       redundant_temperature_raw = raw_temp_1_value;
 #endif
-#if (EXTRUDERS > 2) && defined(TEMP_2_PIN) && (TEMP_2_PIN > -1)
-      current_temperature_raw[2] = raw_temp_2_value;
+#if defined(TEMP_PINDA_PIN) && (TEMP_PINDA_PIN > -1)
+      current_temperature_pinda_raw = raw_temp_pinda_value;
 #endif
       current_temperature_bed_raw = raw_temp_bed_value;
     }
@@ -1941,8 +1940,8 @@ ISR(TIMER0_COMPB_vect)
     temp_count = 0;
     raw_temp_0_value = 0;
     raw_temp_1_value = 0;
-#if defined(TEMP_2_PIN) && (TEMP_2_PIN > -1)
-    raw_temp_2_value = 0;
+#if defined(TEMP_PINDA_PIN) && (TEMP_PINDA_PIN > -1)
+    raw_temp_pinda_value = 0;
 #endif
     raw_temp_bed_value = 0;
 

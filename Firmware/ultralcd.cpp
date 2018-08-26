@@ -2242,7 +2242,7 @@ bool lcd_wait_for_pinda(float temp) {
   bool target_temp_reached = true;
 
   while (current_temperature_pinda > temp){
-    lcd_display_message_fullscreen_P("Waiting for PINDA probe cooling");////MSG_WAITING_TEMP_PINDA c=20 r=3
+    lcd_display_message_fullscreen_P(MSG_WAITING_TEMP_PINDA);
 
     lcd.setCursor(0, 4);
     lcd.print(LCD_STR_THERMOMETER[0]);
@@ -2711,7 +2711,7 @@ void lcd_temp_cal_show_result(bool result) {
   else {
     eeprom_update_byte((uint8_t*)EEPROM_CALIBRATION_STATUS_PINDA, 0);
     SERIAL_ECHOLNPGM("Temperature calibration failed. Continue with pressing the knob.");
-    lcd_show_fullscreen_message_and_wait_P("Temperature calibration failed");////MSG_TEMP_CAL_FAILED c=20 r=8
+    lcd_show_fullscreen_message_and_wait_P(MSG_TEMP_CAL_FAILED);
     temp_cal_active = false;
     eeprom_update_byte((unsigned char *)EEPROM_TEMP_CAL_ACTIVE, 0);
   }

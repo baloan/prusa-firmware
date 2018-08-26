@@ -3174,8 +3174,7 @@ void process_commands()
   		if (start_temp < 35) start_temp = 35;
   		if (start_temp < current_temperature_pinda) start_temp += 5;
   		printf_P("start temperature: %.1f\n", start_temp);
-  
-  //			setTargetHotend(200, 0);
+    //			setTargetHotend(200, 0);
   		setTargetBed(70 + (start_temp - 30));
   
   		custom_message = true;
@@ -3259,10 +3258,8 @@ void process_commands()
   			printf_P("\nPINDA temperature: %.1f Z shift (mm): %.3f", current_temperature_pinda, current_position[Z_AXIS] - zero_z);
   
   			EEPROM_save_B(EEPROM_PROBE_TEMP_SHIFT + i * 2, &z_shift);
-  
   		}
   		lcd_temp_cal_show_result(true);
-  
     }
     break;
 #endif //PINDA_THERMISTOR
