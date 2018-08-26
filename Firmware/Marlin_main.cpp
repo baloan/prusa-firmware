@@ -3135,7 +3135,6 @@ void process_commands()
 	break;
 
 	case 76: //PINDA probe temperature calibration
-	{
 #ifdef PINDA_THERMISTOR
     { // create local scope to avoid redeclaration errors of zero_z etc
   		if (calibration_status() >= CALIBRATION_STATUS_XYZ_CALIBRATION) {
@@ -3264,125 +3263,9 @@ void process_commands()
   		}
   		lcd_temp_cal_show_result(true);
   
-  		break;
     }
+    break;
 #endif //PINDA_THERMISTOR
-
-		setTargetBed(PINDA_MIN_T);
-		float zero_z;
-		int z_shift = 0; //unit: steps
-		int t_c; // temperature
-
-		if (!(axis_known_position[X_AXIS] && axis_known_position[Y_AXIS] && axis_known_position[Z_AXIS])) {
-			// We don't know where we are! HOME!
-			// Push the commands to the front of the message queue in the reverse order!
-			// There shall be always enough space reserved for these commands.
-			repeatcommand_front(); // repeat G76 with all its parameters
-			enquecommand_front_P((PSTR("G28 W0")));
-			break;
-		}
-		KEEPALIVE_STATE(NOT_BUSY); //no need to print busy messages as we print current temperatures periodicaly
-		SERIAL_ECHOLNPGM("PINDA probe calibration start");
-		custom_message = true;
-		custom_message_type = 4;
-		custom_message_state = 1;
-		custom_message = MSG_TEMP_CALIBRATION;
-		current_position[X_AXIS] = PINDA_PREHEAT_X;
-		current_position[Y_AXIS] = PINDA_PREHEAT_Y;
-		current_position[Z_AXIS] = PINDA_PREHEAT_Z;
-		plan_buffer_line(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS], 3000 / 60, active_extruder);
-		st_synchronize();
-		
-		while (abs(degBed() - PINDA_MIN_T) > 1) {
-			delay_keep_alive(1000);
-			serialecho_temperatures();
-		}
-		
-		//enquecommand_P(PSTR("M190 S50"));
-		for (int i = 0; i < PINDA_HEAT_T; i++) {
-			delay_keep_alive(1000);
-			serialecho_temperatures();
-		}
-		eeprom_update_byte((uint8_t*)EEPROM_CALIBRATION_STATUS_PINDA, 0); //invalidate temp. calibration in case that in will be aborted during the calibration process 
-
-		current_position[Z_AXIS] = 5;
-		plan_buffer_line(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS], 3000 / 60, active_extruder);
-
-		current_position[X_AXIS] = pgm_read_float(bed_ref_points);
-		current_position[Y_AXIS] = pgm_read_float(bed_ref_points + 1);
-		plan_buffer_line(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS], 3000 / 60, active_extruder);
-		st_synchronize();
-		
-		find_bed_induction_sensor_point_z(-1.f);
-		zero_z = current_position[Z_AXIS];
-
-		//current_position[Z_AXIS]
-		SERIAL_ECHOLNPGM("");
-		SERIAL_ECHOPGM("ZERO: ");
-		MYSERIAL.print(current_position[Z_AXIS]);
-		SERIAL_ECHOLNPGM("");
-
-		for (int i = 0; i<5; i++) {
-			SERIAL_ECHOPGM("Step: ");
-			MYSERIAL.print(i+2);
-			SERIAL_ECHOLNPGM("/6");
-			custom_message_state = i + 2;
-			t_c = 60 + i * 10;
-
-			setTargetBed(t_c);
-			current_position[X_AXIS] = PINDA_PREHEAT_X;
-			current_position[Y_AXIS] = PINDA_PREHEAT_Y;
-			current_position[Z_AXIS] = PINDA_PREHEAT_Z;
-			plan_buffer_line(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS], 3000 / 60, active_extruder);
-			st_synchronize();
-			while (degBed() < t_c) {
-				delay_keep_alive(1000);
-				serialecho_temperatures();
-			}
-			for (int i = 0; i < PINDA_HEAT_T; i++) {
-				delay_keep_alive(1000);
-				serialecho_temperatures();
-			}
-			current_position[Z_AXIS] = 5;
-			plan_buffer_line(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS], 3000 / 60, active_extruder);
-			current_position[X_AXIS] = pgm_read_float(bed_ref_points);
-			current_position[Y_AXIS] = pgm_read_float(bed_ref_points + 1);
-			plan_buffer_line(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS], 3000 / 60, active_extruder);
-			st_synchronize();
-			find_bed_induction_sensor_point_z(-1.f);
-			z_shift = (int)((current_position[Z_AXIS] - zero_z)*axis_steps_per_unit[Z_AXIS]);
-
-			SERIAL_ECHOLNPGM("");
-			SERIAL_ECHOPGM("Temperature: ");
-			MYSERIAL.print(t_c);
-			SERIAL_ECHOPGM(" Z shift (mm):");
-			MYSERIAL.print(current_position[Z_AXIS] - zero_z);
-			SERIAL_ECHOLNPGM("");
-
-			EEPROM_save_B(EEPROM_PROBE_TEMP_SHIFT + i*2, &z_shift);
-			
-		
-		}
-		custom_message_type = 0;
-		custom_message = false;
-
-		eeprom_update_byte((uint8_t*)EEPROM_CALIBRATION_STATUS_PINDA, 1);
-		SERIAL_ECHOLNPGM("Temperature calibration done. Continue with pressing the knob.");
-			disable_x();
-			disable_y();
-			disable_z();
-			disable_e0();
-			disable_e1();
-			disable_e2();
-			setTargetBed(0); //set bed target temperature back to 0
-		lcd_show_fullscreen_message_and_wait_P(MSG_TEMP_CALIBRATION_DONE);
-		lcd_update_enable(true);
-		lcd_update(2);		
-
-		
-
-	}
-	break;
 
 #ifdef DIS
 	case 77:
