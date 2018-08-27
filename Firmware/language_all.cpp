@@ -3387,6 +3387,11 @@ const char * const MSG_TEMP_CAL_FAILED_LANG_TABLE[1] PROGMEM = {
 	MSG_TEMP_CAL_FAILED_EN
 };
 
+const char MSG_TEMP_CAL_WARNING_EN[] PROGMEM = "Stable ambient temperature 21-26C is needed a rigid stand is required.";
+const char * const MSG_TEMP_CAL_WARNING_LANG_TABLE[1] PROGMEM = {
+	MSG_TEMP_CAL_WARNING_EN
+};
+
 const char MSG_TOSHIBA_FLASH_AIR_COMPATIBILITY_OFF_EN[] PROGMEM = "SD card [normal]";
 const char MSG_TOSHIBA_FLASH_AIR_COMPATIBILITY_OFF_PL[] PROGMEM = "karta SD [normal]";
 const char MSG_TOSHIBA_FLASH_AIR_COMPATIBILITY_OFF_DE[] PROGMEM = "SD Karte [normal]";

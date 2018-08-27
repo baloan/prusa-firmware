@@ -285,6 +285,7 @@
 #define(length=20, lines=1) MSG_PID_FINISHED					"PID cal. finished"
 #define(length=20, lines=1) MSG_PID_RUNNING						"PID cal.           "
 
+#define(length=20, lines=4) MSG_TEMP_CAL_WARNING				"Stable ambient temperature 21-26C is needed a rigid stand is required."
 #define(length=17, lines=1) MSG_CALIBRATE_PINDA					"Calibrate"
 #define(length=17, lines=1) MSG_CALIBRATION_PINDA_MENU			"Temp. calibration"
 #define(length=20, lines=3) MSG_WAITING_TEMP_PINDA   			"Waiting for PINDA probe cooling"

@@ -3153,7 +3153,7 @@ void process_commands()
   			enquecommand_front_P((PSTR("G28 W0")));
   			break;
   		}
-  		lcd_show_fullscreen_message_and_wait_P("Stable ambient temperature 21-26C is needed a rigid stand is required.");////MSG_TEMP_CAL_WARNING c=20 r=4
+  		lcd_show_fullscreen_message_and_wait_P(MSG_TEMP_CAL_WARNING);
   		
   		if ((current_temperature_pinda > 35) && (farm_mode == false)) {
   			//waiting for PIDNA probe to cool down in case that we are not in farm mode
@@ -3337,10 +3337,7 @@ void process_commands()
 			break;
 		} 
 
-  bool temp_comp_start = true;
-#ifdef PINDA_THERMISTOR
-		temp_comp_start = false;
-#endif //PINDA_THERMISTOR
+#ifndef PINDA_THERMISTOR
 		if (run == false && temp_cal_active == true && calibration_status_pinda() == true && target_temperature_bed >= 50) {
 			if (lcd_commands_type != LCD_COMMAND_STOP_PRINT) {
 				temp_compensation_start();
@@ -3353,6 +3350,7 @@ void process_commands()
 			}
 			break;
 		}
+#endif //PINDA_THERMISTOR
 		run = false;
 		if (lcd_commands_type == LCD_COMMAND_STOP_PRINT) {
 			mesh_bed_leveling_flag = false;
@@ -3482,13 +3480,6 @@ void process_commands()
 #ifdef PINDA_THERMISTOR
 			offset_z = temp_compensation_pinda_thermistor_offset(current_temperature_pinda);
 #endif //PINDA_THERMISTOR	   
-			#ifdef SUPPORT_VERBOSITY
-			if (verbosity_level >= 1) {
-				SERIAL_ECHOPGM("mesh bed leveling: ");
-				MYSERIAL.print(current_position[Z_AXIS], 5);
-				SERIAL_ECHOLNPGM("");
-			}
-			#endif // SUPPORT_VERBOSITY
 			mbl.set_z(ix, iy, current_position[Z_AXIS]); //store measured z values z_values[iy][ix] = z;
 
 			custom_message_state--;
@@ -3511,11 +3502,9 @@ void process_commands()
 		}
 		clean_up_after_endstop_move();
 		SERIAL_ECHOLNPGM("clean up finished ");
-    bool apply_temp_comp = true;
-#ifdef PINDA_THERMISTOR
-		apply_temp_comp = false;
-#endif
+#ifndef PINDA_THERMISTOR
 		if(temp_cal_active == true && calibration_status_pinda() == true) temp_compensation_apply(); //apply PINDA temperature compensation
+#endif
 		babystep_apply(); // Apply Z height correction aka baby stepping before mesh bed leveing gets activated.
 		SERIAL_ECHOLNPGM("babystep applied");
 		bool eeprom_bed_correction_valid = eeprom_read_byte((unsigned char*)EEPROM_BED_CORRECTION_VALID) == 1;
@@ -7157,5 +7146,9 @@ void serialecho_temperatures() {
 	SERIAL_PROTOCOL((int)active_extruder);
 	SERIAL_PROTOCOLPGM(" B:");
 	SERIAL_PROTOCOL_F(degBed(), 1);
+#ifdef PINDA_THERMISTOR
+	SERIAL_PROTOCOLPGM(" P:");
+	SERIAL_PROTOCOL_F(degPinda(), 1);
+#endif
 	SERIAL_PROTOCOLLN("");
 }

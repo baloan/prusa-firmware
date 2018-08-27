@@ -121,6 +121,12 @@ FORCE_INLINE float degBed() {
   return current_temperature_bed;
 };
 
+#ifdef PINDA_THERMISTOR
+FORCE_INLINE float degPinda() {
+  return current_temperature_pinda;
+};
+#endif
+
 FORCE_INLINE float degTargetHotend(uint8_t extruder) {  
   return target_temperature[extruder];
 };
