@@ -2599,6 +2599,3 @@ void count_xyz_details() {
 /*countDistanceFromMin() {
 
 }*/
-
-
-

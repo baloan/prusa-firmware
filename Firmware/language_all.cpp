@@ -541,6 +541,11 @@ const char * const MSG_CALIBRATE_E_LANG_TABLE[LANG_NUM] PROGMEM = {
 	MSG_CALIBRATE_E_DE
 };
 
+const char MSG_CALIBRATE_FIRST_EN[] PROGMEM = "Please run XYZ calibration first.";
+const char * const MSG_CALIBRATE_FIRST_LANG_TABLE[1] PROGMEM = {
+	MSG_CALIBRATE_FIRST_EN
+};
+
 const char MSG_CALIBRATE_PINDA_EN[] PROGMEM = "Calibrate";
 const char MSG_CALIBRATE_PINDA_CZ[] PROGMEM = "Zkalibrovat";
 const char MSG_CALIBRATE_PINDA_IT[] PROGMEM = "Calibrare";

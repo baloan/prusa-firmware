@@ -13,7 +13,7 @@ GENERAL SETTINGS
 #define DEVELOPER
 
 // Printer name
-#define CUSTOM_MENDEL_NAME "Prusa i3 MK2P"
+#define CUSTOM_MENDEL_NAME "Prusa i3 MK2/P"
 
 // Electronics
 #define MOTHERBOARD BOARD_RAMBO_MINI_1_3
@@ -48,7 +48,7 @@ const bool Z_MIN_ENDSTOP_INVERTING = false; // set to true to invert the logic o
 // Home position
 #define MANUAL_X_HOME_POS 0
 #define MANUAL_Y_HOME_POS -2.2
-#define MANUAL_Z_HOME_POS 0.15
+#define MANUAL_Z_HOME_POS 0.2
 
 // Travel limits after homing
 #define X_MAX_POS 250
@@ -99,7 +99,7 @@ EXTRUDER SETTINGS
 #endif
 #define HEATER_1_MAXTEMP 305
 #define HEATER_2_MAXTEMP 305
-#define BED_MAXTEMP 150
+#define BED_MAXTEMP 125
 
 #if defined(E3D_PT100_EXTRUDER_WITH_AMP) || defined(E3D_PT100_EXTRUDER_NO_AMP)
 // Define PID constants for extruder with PT100
@@ -114,7 +114,7 @@ EXTRUDER SETTINGS
 #endif
 
 // Extrude mintemp
-#define EXTRUDE_MINTEMP 130
+#define EXTRUDE_MINTEMP 180
 
 // Extruder cooling fans
 #define EXTRUDER_0_AUTO_FAN_PIN   8
@@ -228,7 +228,7 @@ BED SETTINGS
 #define MESH_HOME_Z_SEARCH 5 //Z lift for homing, mesh bed leveling etc.
 
 #define X_PROBE_OFFSET_FROM_EXTRUDER 23     // Z probe to nozzle X offset: -left  +right
-#define Y_PROBE_OFFSET_FROM_EXTRUDER 9     // Z probe to nozzle Y offset: -front +behind
+#define Y_PROBE_OFFSET_FROM_EXTRUDER 5     // Z probe to nozzle Y offset: -front +behind
 #define Z_PROBE_OFFSET_FROM_EXTRUDER -0.4  // Z probe to nozzle Z offset: -below (always!)
 #endif
 
@@ -287,32 +287,32 @@ PREHEAT SETTINGS
 *------------------------------------*/
 
 #define PLA_PREHEAT_HOTEND_TEMP 215
-#define PLA_PREHEAT_HPB_TEMP 55
-#define PLA_PREHEAT_FAN_SPEED 0  
+#define PLA_PREHEAT_HPB_TEMP 60
+#define PLA_PREHEAT_FAN_SPEED 0
 
 #define ABS_PREHEAT_HOTEND_TEMP 255
 #define ABS_PREHEAT_HPB_TEMP 100
-#define ABS_PREHEAT_FAN_SPEED 0 
+#define ABS_PREHEAT_FAN_SPEED 0
 
 #define HIPS_PREHEAT_HOTEND_TEMP 220
 #define HIPS_PREHEAT_HPB_TEMP 100
-#define HIPS_PREHEAT_FAN_SPEED 0 
+#define HIPS_PREHEAT_FAN_SPEED 0
 
 #define PP_PREHEAT_HOTEND_TEMP 254
 #define PP_PREHEAT_HPB_TEMP 100
-#define PP_PREHEAT_FAN_SPEED 0 
+#define PP_PREHEAT_FAN_SPEED 0
 
-#define PET_PREHEAT_HOTEND_TEMP 240
-#define PET_PREHEAT_HPB_TEMP 90
-#define PET_PREHEAT_FAN_SPEED 0 
+#define PET_PREHEAT_HOTEND_TEMP 230
+#define PET_PREHEAT_HPB_TEMP 85
+#define PET_PREHEAT_FAN_SPEED 0
 
-#define FLEX_PREHEAT_HOTEND_TEMP 230
+#define FLEX_PREHEAT_HOTEND_TEMP 240
 #define FLEX_PREHEAT_HPB_TEMP 50
-#define FLEX_PREHEAT_FAN_SPEED 0 
+#define FLEX_PREHEAT_FAN_SPEED 0
 
 /*------------------------------------
-THERMISTORS SETTINGS
-*------------------------------------*/
+ THERMISTORS SETTINGS
+ *------------------------------------*/
 
 //
 //--NORMAL IS 4.7kohm PULLUP!-- 1kohm pullup can be used on hotend sensor, using correct resistor and table
@@ -334,7 +334,7 @@ THERMISTORS SETTINGS
 // 10 is 100k RS thermistor 198-961 (4.7k pullup)
 // 11 is 100k beta 3950 1% thermistor (4.7k pullup)
 // 12 is 100k 0603 SMD Vishay NTCS0603E3104FXT (4.7k pullup) (calibrated for Makibox hot bed)
-// 13 is 100k Hisens 3950  1% up to 300°C for hotend "Simple ONE " & "Hotend "All In ONE" 
+// 13 is 100k Hisens 3950  1% up to 300°C for hotend "Simple ONE " & "Hotend "All In ONE"
 // 20 is the PT100 circuit found in the Ultimainboard V2.x
 // 60 is 100k Maker's Tool Works Kapton Bed Thermistor beta=3950
 //
@@ -379,7 +379,7 @@ THERMISTORS SETTINGS
 #define Z_BABYSTEP_MIN -3999
 #define Z_BABYSTEP_MAX 0
 
-#define PINDA_PREHEAT_X 50  // 70
+#define PINDA_PREHEAT_X 20  // 70
 #define PINDA_PREHEAT_Y 60  // -3
 #define PINDA_PREHEAT_Z 0.5 // 1
 #define PINDA_HEAT_T 120    //time in s
@@ -394,7 +394,7 @@ THERMISTORS SETTINGS
 #define NC_TIME 10 //time in s for periodic important status messages sending which needs reponse from monitoring
 #define NC_BUTTON_LONG_PRESS 15 //time in s
 
-#define LONG_PRESS_TIME 1000 //time in ms for button long press 
+#define LONG_PRESS_TIME 1000 //time in ms for button long press
 #define BUTTON_BLANKING_TIME 200 //time in ms for blanking after button release
 
 #define DEFAULT_PID_TEMP 210

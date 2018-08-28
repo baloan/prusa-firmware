@@ -3124,9 +3124,9 @@ void process_commands()
         break;
 	
 
-	case 75:
+	case 75: // G75 dump PINDA probe temperature correction
 	{
-		for (int i = 40; i <= 110; i++) {
+		for (int i = 30; i <= 65; i++) {
 			MYSERIAL.print(i);
 			MYSERIAL.print("  ");
 			MYSERIAL.println(temp_comp_interpolation(i));// / axis_steps_per_unit[Z_AXIS]);
@@ -3134,13 +3134,13 @@ void process_commands()
 	}
 	break;
 
-	case 76: //PINDA probe temperature calibration
+	case 76: // G76 PINDA probe temperature calibration
 #ifdef PINDA_THERMISTOR
     { // create local scope to avoid redeclaration errors of zero_z etc
   		if (calibration_status() >= CALIBRATION_STATUS_XYZ_CALIBRATION) {
   			//we need to know accurate position of first calibration point
   			//if xyz calibration was not performed yet, interrupt temperature calibration and inform user that xyz cal. is needed
-  			lcd_show_fullscreen_message_and_wait_P("Please run XYZ calibration first.");
+  			lcd_show_fullscreen_message_and_wait_P(MSG_CALIBRATE_FIRST);
   			break;
   		}
   		
@@ -3174,7 +3174,7 @@ void process_commands()
   		if (start_temp < 35) start_temp = 35;
   		if (start_temp < current_temperature_pinda) start_temp += 5;
   		printf_P("start temperature: %.1f\n", start_temp);
-    //			setTargetHotend(200, 0);
+		// setTargetHotend(200, 0);
   		setTargetBed(70 + (start_temp - 30));
   
   		custom_message = true;
@@ -3227,8 +3227,9 @@ void process_commands()
   			float temp = (40 + i * 5);
   			printf_P("\nStep: %d/6\n", i + 2);
   			custom_message_state = i + 2;
-  			setTargetBed(50 + 10 * (temp - 30) / 5);
-  //				setTargetHotend(255, 0);
+			setTargetBed(70 + i * 11);
+  			// setTargetBed(50 + 10 * (temp - 30) / 5);   bed 110C not enough to heat PINDA V2 to 60C
+			// setTargetHotend(255, 0);
   			current_position[Z_AXIS] = MESH_HOME_Z_SEARCH;
   			plan_buffer_line(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS], 3000 / 60, active_extruder);
   			current_position[X_AXIS] = PINDA_PREHEAT_X;
@@ -3476,7 +3477,7 @@ void process_commands()
 				SERIAL_PROTOCOLPGM("\n");
 			}
 			#endif // SUPPORT_VERBOSITY
-      float offset_z = 0;
+			float offset_z = 0;
 #ifdef PINDA_THERMISTOR
 			offset_z = temp_compensation_pinda_thermistor_offset(current_temperature_pinda);
 #endif //PINDA_THERMISTOR	   
