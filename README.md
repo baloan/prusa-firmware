@@ -4,6 +4,63 @@
 
 This custom firmware is forked from the Original Prusa i3 Firmware. The firmware supports temperature calibration with a PINDA V2 with a hybrid extruder on a Prusa i3 Mk2/S frame . See thingiverse at [https://www.thingiverse.com/thing:3062641](https://www.thingiverse.com/thing:3062641 "Prusa i3 Mk2S upgrade with hybrid Mk2.5 R3 extruder") for details.
 
+### example calibration
+This is the first successful calibration I achieved with the  v3.1.0-pindav2-r1 firmware. The calibration matrix can be queried with a terminal with the G Code `M861 ?`.
+
+<table style="border-collapse: collapse; width: 136pt;" border="0"
+cellpadding="0" cellspacing="0" width="180">
+<col style="width: 34pt;" span="4" width="45"> <tbody>
+<tr style="height: 15pt;" height="20">
+<td class="xl63"
+style="height: 15pt; width: 34pt; text-align: right;" height="20"
+width="45">index</td>
+<td class="xl63" style="width: 34pt; text-align: right;"
+width="45"><span style="">&nbsp;</span>temp</td>
+<td class="xl63" style="width: 34pt; text-align: right;"
+width="45"><span style="">&nbsp;</span>ustep</td>
+<td class="xl63" style="width: 34pt; text-align: right;"
+width="45"><span style="">&nbsp;</span>um</td>
+</tr>
+<tr style="height: 15pt;" height="20">
+<td class="xl63" style="height: 15pt; text-align: right;"
+height="20">n/a</td>
+<td style="text-align: right;" class="xl63">35</td>
+<td style="text-align: right;" class="xl63">0</td>
+<td style="text-align: right;" class="xl63">0</td>
+</tr>
+<tr style="height: 15pt;" height="20">
+<td style="height: 15pt;" align="right" height="20">0</td>
+<td align="right">40</td>
+<td align="right">36</td>
+<td align="right">90</td>
+</tr>
+<tr style="height: 15pt;" height="20">
+<td style="height: 15pt;" align="right" height="20">1</td>
+<td align="right">45</td>
+<td align="right">58</td>
+<td align="right">145</td>
+</tr>
+<tr style="height: 15pt;" height="20">
+<td style="height: 15pt;" align="right" height="20">2</td>
+<td align="right">50</td>
+<td align="right">82</td>
+<td align="right">205</td>
+</tr>
+<tr style="height: 15pt;" height="20">
+<td style="height: 15pt;" align="right" height="20">3</td>
+<td align="right">55</td>
+<td align="right">109</td>
+<td align="right">272</td>
+</tr>
+<tr style="height: 15pt;" height="20">
+<td style="height: 15pt;" align="right" height="20">4</td>
+<td align="right">60</td>
+<td align="right">119</td>
+<td align="right">297</td>
+</tr>
+</tbody>
+</table>
+
 ## Build instructions
 
 ### Step 1 - Download and Install/Unpack Arduino
