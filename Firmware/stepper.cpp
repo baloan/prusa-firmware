@@ -915,7 +915,13 @@ void st_init()
     #endif
   #endif
 
-
+  #if (defined(FANCHECK) && defined(TACH_0) && (TACH_0 > -1))
+	SET_INPUT(TACH_0);
+    #ifdef TACH0PULLUP
+	  WRITE(TACH_0, HIGH);
+    #endif
+  #endif
+  
   //Initialize Step Pins
   #if defined(X_STEP_PIN) && (X_STEP_PIN > -1)
     SET_OUTPUT(X_STEP_PIN);

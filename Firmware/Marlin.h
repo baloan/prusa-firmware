@@ -260,8 +260,8 @@ extern float max_pos[3];
 extern bool axis_known_position[3];
 extern float zprobe_zoffset;
 extern int fanSpeed;
+extern bool fans_check_enabled;
 extern void homeaxis(int axis);
-
 
 #ifdef FAN_SOFT_PWM
 extern unsigned char fanSpeedSoftPwm;
@@ -314,6 +314,9 @@ extern bool no_response;
 extern uint8_t important_status;
 extern uint8_t saved_filament_type;
 
+extern bool fan_state[2];
+extern int fan_edge_counter[2];
+extern int fan_speed[2];
 
 // Handling multiple extruders pins
 extern uint8_t active_extruder;

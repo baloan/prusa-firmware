@@ -440,6 +440,88 @@ void setExtruderAutoFanState(int pin, bool state)
   analogWrite(pin, newFanSpeed);
 }
 
+#if (defined(FANCHECK) && (((defined(TACH_0) && (TACH_0 >-1)) || (defined(TACH_1) && (TACH_1 > -1)))))
+
+void countFanSpeed()
+{
+	//SERIAL_ECHOPGM("edge counter 1:"); MYSERIAL.println(fan_edge_counter[1]);
+	fan_speed[0] = (fan_edge_counter[0] * (float(250) / (millis() - extruder_autofan_last_check)));
+	fan_speed[1] = (fan_edge_counter[1] * (float(250) / (millis() - extruder_autofan_last_check)));
+	/*SERIAL_ECHOPGM("time interval: "); MYSERIAL.println(millis() - extruder_autofan_last_check);
+	SERIAL_ECHOPGM("extruder fan speed:"); MYSERIAL.print(fan_speed[0]); SERIAL_ECHOPGM("; edge counter:"); MYSERIAL.println(fan_edge_counter[0]);
+	SERIAL_ECHOPGM("print fan speed:"); MYSERIAL.print(fan_speed[1]); SERIAL_ECHOPGM("; edge counter:"); MYSERIAL.println(fan_edge_counter[1]);
+	SERIAL_ECHOLNPGM(" ");*/
+	fan_edge_counter[0] = 0;
+	fan_edge_counter[1] = 0;
+}
+
+extern bool fans_check_enabled;
+
+void checkFanSpeed()
+{
+	fans_check_enabled = (eeprom_read_byte((uint8_t*)EEPROM_FAN_CHECK_ENABLED) > 0);
+	static unsigned char fan_speed_errors[2] = { 0,0 };
+#if (defined(FANCHECK) && defined(TACH_0) && (TACH_0 >-1))
+	if ((fan_speed[0] == 0) && (current_temperature[0] > EXTRUDER_AUTO_FAN_TEMPERATURE)) fan_speed_errors[0]++;
+	else fan_speed_errors[0] = 0;
+#endif
+#if (defined(FANCHECK) && defined(TACH_1) && (TACH_1 >-1))
+	if ((fan_speed[1] == 0) && ((blocks_queued() ? block_buffer[block_buffer_tail].fan_speed : fanSpeed) > MIN_PRINT_FAN_SPEED)) fan_speed_errors[1]++;
+	else fan_speed_errors[1] = 0;
+#endif
+
+	if ((fan_speed_errors[0] > 5) && fans_check_enabled) {
+		fan_speed_errors[0] = 0;
+		fanSpeedError(0); //extruder fan
+	}
+	if ((fan_speed_errors[1] > 15) && fans_check_enabled) {
+		fan_speed_errors[1] = 0;
+		fanSpeedError(1); //print fan
+	}
+}
+
+extern void stop_and_save_print_to_ram(float z_move, float e_move);
+extern void restore_print_from_ram_and_continue(float e_move);
+
+void fanSpeedError(unsigned char _fan) {
+	if (isPrintPaused) return; 
+	//to ensure that target temp. is not set to zero in case that we are resuming print 
+	if (card.sdprinting) {
+		if (heating_status != 0) {
+			lcd_print_stop();
+		}
+		else {
+			isPrintPaused = true;
+			lcd_sdcard_pause();
+		}
+	}
+	else {
+			setTargetHotend0(0);
+			SERIAL_ECHOLNPGM("// action:pause"); //for octoprint
+	}
+	switch (_fan) {
+	case 0:
+		SERIAL_ECHOLNPGM("Extruder fan speed is lower then expected");
+		WRITE(BEEPER, HIGH);
+		delayMicroseconds(200);
+		WRITE(BEEPER, LOW);
+		delayMicroseconds(100);
+		LCD_ALERTMESSAGEPGM("Err: EXTR. FAN ERROR");
+		break;
+	case 1:
+		SERIAL_ECHOLNPGM("Print fan speed is lower then expected");
+		WRITE(BEEPER, HIGH);
+		delayMicroseconds(200);
+		WRITE(BEEPER, LOW);
+		delayMicroseconds(100);
+		LCD_ALERTMESSAGEPGM("Err: PRINT FAN ERROR");
+		break;
+	}
+}
+#endif //(defined(TACH_0) && TACH_0 >-1) || (defined(TACH_1) && TACH_1 > -1)
+
+
+
 void checkExtruderAutoFans()
 {
   uint8_t fanState = 0;
@@ -610,8 +692,12 @@ void manage_heater()
   #if (defined(EXTRUDER_0_AUTO_FAN_PIN) && EXTRUDER_0_AUTO_FAN_PIN > -1) || \
       (defined(EXTRUDER_1_AUTO_FAN_PIN) && EXTRUDER_1_AUTO_FAN_PIN > -1) || \
       (defined(EXTRUDER_2_AUTO_FAN_PIN) && EXTRUDER_2_AUTO_FAN_PIN > -1)
-  if(millis() - extruder_autofan_last_check > 2500)  // only need to check fan state very infrequently
+  if(millis() - extruder_autofan_last_check > 1000)  // only need to check fan state very infrequently
   {
+#if (defined(FANCHECK) && ((defined(TACH_0) && (TACH_0 >-1)) || (defined(TACH_1) && (TACH_1 > -1))))
+	countFanSpeed();
+	checkFanSpeed();
+#endif //(defined(TACH_0) && TACH_0 >-1) || (defined(TACH_1) && TACH_1 > -1)
     checkExtruderAutoFans();
     extruder_autofan_last_check = millis();
   }  
@@ -2034,8 +2120,24 @@ ISR(TIMER0_COMPB_vect)
     }
   }
 #endif //BABYSTEPPING
-}
 
+#if (defined(FANCHECK) && defined(TACH_0) && (TACH_0 > -1))
+  check_fans();
+#endif //(defined(TACH_0))
+}
+#if (defined(FANCHECK) && defined(TACH_0) && (TACH_0 > -1))
+void check_fans() {
+	if (READ(TACH_0) != fan_state[0]) {
+		fan_edge_counter[0] ++;
+		fan_state[0] = !fan_state[0];
+	}
+	//if (READ(TACH_1) != fan_state[1]) {
+	//	fan_edge_counter[1] ++;
+	//	fan_state[1] = !fan_state[1];
+	//}
+}
+#endif //TACH_0
+			   
 #ifdef PIDTEMP
 // Apply the scale factors to the PID values
 

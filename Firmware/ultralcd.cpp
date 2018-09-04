@@ -174,6 +174,7 @@ static bool lcd_selfcheck_check_heater(bool _isbed);
 static int  lcd_selftest_screen(int _step, int _progress, int _progress_scale, bool _clear, int _delay);
 static void lcd_selftest_screen_step(int _row, int _col, int _state, const char *_name, const char *_indicator);
 static bool lcd_selftest_fan_dialog(int _fan);
+static bool lcd_selftest_auto_fan_check(int _fan);
 static void lcd_selftest_error(int _error_no, const char *_error_1, const char *_error_2);
 
 static void lcd_colorprint_change();
@@ -1499,6 +1500,12 @@ static void lcd_support_menu()
   END_MENU();
 }
 
+void lcd_set_fan_check() {
+	fans_check_enabled = !fans_check_enabled;
+	eeprom_update_byte((unsigned char *)EEPROM_FAN_CHECK_ENABLED, fans_check_enabled);
+	lcd_goto_menu(lcd_settings_menu); //doesn't break menuStack
+}
+						  
 void lcd_unLoadFilament()
 {
 
@@ -3563,6 +3570,12 @@ static void lcd_settings_menu()
 	  }	  
   }
   
+  if (fans_check_enabled == true) {
+	  MENU_ITEM(function, MSG_FANS_CHECK_ON, lcd_set_fan_check);
+  }
+  else {
+	  MENU_ITEM(function, MSG_FANS_CHECK_OFF, lcd_set_fan_check);
+  }
 	if (!isPrintPaused && !homing_flag)
 	{
 		MENU_ITEM(submenu, MSG_BABYSTEP_Z, lcd_babystep_z);
@@ -4942,7 +4955,39 @@ static void lcd_sd_updir()
   card.updir();
   currentMenuViewOffset = 0;
 }
+void lcd_print_stop() {
+	cancel_heatup = true;
+#ifdef MESH_BED_LEVELING
+	mbl.active = false;
+#endif
+	// Stop the stoppers, update the position from the stoppers.
+	if (mesh_bed_leveling_flag == false && homing_flag == false) {
+		planner_abort_hard();
+		// Because the planner_abort_hard() initialized current_position[Z] from the stepper,
+		// Z baystep is no more applied. Reset it.
+		babystep_reset();
+	}
+	// Clean the input command queue.
+	cmdqueue_reset();
+	lcd_setstatuspgm(MSG_PRINT_ABORTED);
+	lcd_update(2);
+	card.sdprinting = false;
+	card.closefile();
 
+	stoptime = millis();
+	unsigned long t = (stoptime - starttime - pause_time) / 1000; //time in s
+	pause_time = 0;
+	save_statistics(total_filament_used, t);
+
+	lcd_return_to_status();
+	lcd_ignore_click(true);
+	lcd_commands_type = LCD_COMMAND_STOP_PRINT;
+	if (farm_mode) prusa_statistics(7);
+	// Turn off the print fan
+	SET_OUTPUT(FAN_PIN);
+	WRITE(FAN_PIN, 0);
+	fanSpeed=0;
+}					   
 
 void lcd_sdcard_stop()
 {
@@ -4970,40 +5015,9 @@ void lcd_sdcard_stop()
 		}
 		if ((int32_t)encoderPosition == 2)
 		{
-		cancel_heatup = true;
-        #ifdef MESH_BED_LEVELING
-        mbl.active = false;
-        #endif
-        // Stop the stoppers, update the position from the stoppers.
-		if (mesh_bed_leveling_flag == false && homing_flag == false) {
-			planner_abort_hard();
-			// Because the planner_abort_hard() initialized current_position[Z] from the stepper,
-			// Z baystep is no more applied. Reset it.
-			babystep_reset();
-		}
-        // Clean the input command queue.
-        cmdqueue_reset();
-				lcd_setstatuspgm(MSG_PRINT_ABORTED);
-				lcd_update(2);
-				card.sdprinting = false;
-				card.closefile();
-
-				stoptime = millis();
-				unsigned long t = (stoptime - starttime - pause_time) / 1000; //time in s
-				pause_time = 0;
-				save_statistics(total_filament_used, t);
-
-				lcd_return_to_status();
-				lcd_ignore_click(true);
-				lcd_commands_type = LCD_COMMAND_STOP_PRINT;
-				if (farm_mode) prusa_statistics(7);
-                // Turn off the print fan
-                SET_OUTPUT(FAN_PIN);
-                WRITE(FAN_PIN, 0);
-                fanSpeed=0;
+			lcd_print_stop();
 		}
 	}
-
 }
 /*
 void getFileDescription(char *name, char *description) {
@@ -5214,7 +5228,11 @@ static bool lcd_selftest()
 	delay(2000);
 
 
+#if (defined(FANCHECK) && defined(TACH_0)) 		
+	_result = lcd_selftest_auto_fan_check(0);
+#else //defined(TACH_0)
 	_result = lcd_selftest_fan_dialog(1);
+#endif //defined(TACH_0)
 
 	if (_result)
 	{
@@ -5743,6 +5761,33 @@ static bool lcd_selftest_fan_dialog(int _fan)
 
 	return _result;
 
+}
+
+static bool lcd_selftest_auto_fan_check(int _fan)
+{
+	bool _result = true;
+	int _errno = 7;
+
+	switch (_fan) {
+	case 0:
+		fanSpeed = 0;
+		manage_heater();			//turn off fan
+		setExtruderAutoFanState(EXTRUDER_0_AUTO_FAN_PIN, 1); //extruder fan
+		delay(2000);				//delay_keep_alive would turn off extruder fan, because temerature is too low
+		manage_heater();			//count average fan speed from 2s delay and turn off fans
+		if (!fan_speed[0]) _result = false;
+		//SERIAL_ECHOPGM("Extruder fan speed: ");
+		//MYSERIAL.println(fan_speed[0]);
+		//SERIAL_ECHOPGM("Print fan speed: ");
+		//MYSERIAL.print(fan_speed[1]);
+		break;
+	}
+	if (!_result)
+	{
+		const char *_err;
+		lcd_selftest_error(_errno, _err, _err);
+	}
+	return _result;
 }
 
 static int lcd_selftest_screen(int _step, int _progress, int _progress_scale, bool _clear, int _delay)

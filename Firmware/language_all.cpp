@@ -1023,6 +1023,16 @@ const char * const MSG_FACTOR_LANG_TABLE[1] PROGMEM = {
 	MSG_FACTOR_EN
 };
 
+const char MSG_FANS_CHECK_OFF_EN[] PROGMEM = "Fans check  [off]";
+const char * const MSG_FANS_CHECK_OFF_LANG_TABLE[1] PROGMEM = {
+	MSG_FANS_CHECK_OFF_EN
+};
+
+const char MSG_FANS_CHECK_ON_EN[] PROGMEM = "Fans check   [on]";
+const char * const MSG_FANS_CHECK_ON_LANG_TABLE[1] PROGMEM = {
+	MSG_FANS_CHECK_ON_EN
+};
+
 const char MSG_FAN_SPEED_EN[] PROGMEM = "Fan speed";
 const char MSG_FAN_SPEED_CZ[] PROGMEM = "Rychlost vent.";
 const char MSG_FAN_SPEED_IT[] PROGMEM = "Velocita vent.";

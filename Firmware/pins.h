@@ -120,7 +120,8 @@
   #else
       #define FAN_PIN            6
   #endif
-  #define KILL_PIN           -1 //80 with Smart Controller LCD
+  #define TACH_0             30
+  #define KILL_PIN           -1  //80 with Smart Controller LCD
   #define SUICIDE_PIN        -1  //PIN that has to be turned on right after start, to keep power flowing.
   #define SDPOWER            -1
   #define HEATER_2_PIN -1

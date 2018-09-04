@@ -25,13 +25,14 @@
   void lcd_change_success();
   void lcd_loading_color();
   void lcd_force_language_selection();
+  void lcd_print_stop();
   void lcd_sdcard_stop();
+  void lcd_sdcard_pause();
   void prusa_statistics(int _message, uint8_t _col_nr = 0);
   void lcd_confirm_print();
   unsigned char lcd_choose_color();
   void lcd_mylang();
   bool lcd_detected(void);
-
   
   void lcd_menu_statistics();
 
@@ -235,6 +236,7 @@ char choose_extruder_menu();
 void lcd_pinda_calibration_menu();
 void lcd_calibrate_pinda();
 void lcd_temp_calibration_set();
+void lcd_set_fan_check();
 
 void display_loading();
 
