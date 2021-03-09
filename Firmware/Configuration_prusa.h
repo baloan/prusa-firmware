@@ -24,7 +24,7 @@
 // Electronics
 #define MOTHERBOARD BOARD_RAMBO_MINI_1_3
 
-//#define HEATBED_V2
+#define HEATBED_V2
 //#define STEEL_SHEET
 #define TACH0PULLUP
 
