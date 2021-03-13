@@ -8,11 +8,11 @@
  *------------------------------------*/
 
 // Printer revision
-#define PRINTER_TYPE PRINTER_MK25S
-#define PRINTER_NAME PRINTER_MK25S_NAME
-#define PRINTER_MMU_TYPE PRINTER_MK25S_MMU2
-#define PRINTER_MMU_NAME PRINTER_MK25S_MMU2_NAME
-#define FILAMENT_SIZE "1_75mm_MK25"
+#define PRINTER_TYPE PRINTER_MK25
+#define PRINTER_NAME PRINTER_MK25_NAME
+#define PRINTER_MMU_TYPE PRINTER_MK25_MMU2
+#define PRINTER_MMU_NAME PRINTER_MK25_MMU2_NAME
+#define FILAMENT_SIZE "1_75mm_MK2S"
 #define NOZZLE_TYPE "E3Dv6full"
 
 // Developer flag
@@ -24,7 +24,7 @@
 // Electronics
 #define MOTHERBOARD BOARD_RAMBO_MINI_1_3
 
-#define HEATBED_V2
+//#define HEATBED_V2
 //#define STEEL_SHEET
 #define TACH0PULLUP
 
@@ -320,7 +320,7 @@
 #define MESH_HOME_Z_CALIB 0.2
 #define MESH_HOME_Z_SEARCH 5.0f           // Z lift for homing, mesh bed leveling etc.
 
-#define X_PROBE_OFFSET_FROM_EXTRUDER 23     // Z probe to nozzle X offset: -left  +right
+#define X_PROBE_OFFSET_FROM_EXTRUDER 23    // Z probe to nozzle X offset: -left  +right
 #define Y_PROBE_OFFSET_FROM_EXTRUDER 5     // Z probe to nozzle Y offset: -front +behind
 #define Z_PROBE_OFFSET_FROM_EXTRUDER -0.4  // Z probe to nozzle Z offset: -below (always!)
 #endif
