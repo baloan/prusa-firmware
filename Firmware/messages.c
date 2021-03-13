@@ -58,7 +58,9 @@ const char MSG_MENU_CALIBRATION[] PROGMEM_I1 = ISTR("Calibration"); ////
 const char MSG_NO[] PROGMEM_I1 = ISTR("No"); ////
 const char MSG_NOZZLE[] PROGMEM_I1 = ISTR("Nozzle"); ////
 const char MSG_PAPER[] PROGMEM_I1 = ISTR("Place a sheet of paper under the nozzle during the calibration of first 4 points. If the nozzle catches the paper, power off the printer immediately."); ////c=20 r=10
+#ifdef STEEL_SHEET
 const char MSG_PLACE_STEEL_SHEET[] PROGMEM_I1 = ISTR("Please place steel sheet on heatbed."); ////c=20 r=4
+#endif
 const char MSG_PLEASE_WAIT[] PROGMEM_I1 = ISTR("Please wait"); ////c=20
 const char MSG_PREHEAT_NOZZLE[] PROGMEM_I1 = ISTR("Preheat the nozzle!"); ////c=20
 const char MSG_PRESS_TO_UNLOAD[] PROGMEM_I1 = ISTR("Please press the knob to unload filament"); ////c=20 r=4
@@ -67,7 +69,9 @@ const char MSG_PULL_OUT_FILAMENT[] PROGMEM_I1 = ISTR("Please pull out filament i
 const char MSG_RECOVER_PRINT[] PROGMEM_I1 = ISTR("Blackout occurred. Recover print?"); ////c=20 r=2
 const char MSG_REFRESH[] PROGMEM_I1 = ISTR("\xF8" "Refresh"); ////
 const char MSG_RESUMING_PRINT[] PROGMEM_I1 = ISTR("Resuming print"); ////
+#ifdef STEEL_SHEET
 const char MSG_REMOVE_STEEL_SHEET[] PROGMEM_I1 = ISTR("Please remove steel sheet from heatbed."); ////c=20 r=4
+#endif
 const char MSG_SELFTEST_COOLING_FAN[] PROGMEM_I1 = ISTR("Front print fan?"); ////c=20
 const char MSG_SELFTEST_EXTRUDER_FAN[] PROGMEM_I1 = ISTR("Left hotend fan?"); ////c=20
 const char MSG_SELFTEST_FAILED[] PROGMEM_I1 = ISTR("Selftest failed  "); ////c=20
@@ -87,7 +91,9 @@ const char MSG_AUTO_POWER[] PROGMEM_I1 = ISTR("Auto power"); ////
 const char MSG_SILENT[] PROGMEM_I1 = ISTR("Silent"); ////
 const char MSG_NORMAL[] PROGMEM_I1 = ISTR("Normal"); ////
 const char MSG_STEALTH[] PROGMEM_I1 = ISTR("Stealth"); ////
+#ifdef STEEL_SHEET
 const char MSG_STEEL_SHEET_CHECK[] PROGMEM_I1 = ISTR("Is steel sheet on heatbed?"); ////c=20 r=2
+#endif
 const char MSG_STOP_PRINT[] PROGMEM_I1 = ISTR("Stop print"); ////
 const char MSG_STOPPED[] PROGMEM_I1 = ISTR("STOPPED. "); ////
 const char MSG_TEMP_CALIBRATION[] PROGMEM_I1 = ISTR("Temp. cal."); ////c=14

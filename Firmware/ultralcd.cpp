@@ -5056,8 +5056,10 @@ void lcd_wizard(WizState state)
 			lcd_show_fullscreen_message_and_wait_P(_i("Please remove shipping helpers first."));
 			lcd_show_fullscreen_message_and_wait_P(_i("Now remove the test print from steel sheet."));
 			lcd_show_fullscreen_message_and_wait_P(_i("I will run z calibration now."));////MSG_WIZARD_Z_CAL c=20 r=8
+			#ifdef STEEL_SHEET
 			wizard_event = lcd_show_fullscreen_message_yes_no_and_wait_P(_T(MSG_STEEL_SHEET_CHECK), false, false);
 			if (!wizard_event) lcd_show_fullscreen_message_and_wait_P(_T(MSG_PLACE_STEEL_SHEET));
+			#endif
 			wizard_event = gcode_M45(true, 0);
 			if (wizard_event) {
 				//current filament needs to be unloaded and then new filament should be loaded
@@ -5696,6 +5698,7 @@ static void select_sheet_menu()
     lcd_sheet_menu();
 }
 
+#ifdef STEEL_SHEET
 static void sheets_menu()
 {
     MENU_BEGIN();
@@ -5710,6 +5713,7 @@ static void sheets_menu()
     MENU_ITEM_SUBMENU_E(EEPROM_Sheets_base->s[7], select_sheet_menu<7>);
     MENU_END();
 }
+#endif
 
 void lcd_hw_setup_menu(void)                      // can not be "static"
 {
@@ -5735,8 +5739,9 @@ void lcd_hw_setup_menu(void)                      // can not be "static"
 
     MENU_BEGIN();
     MENU_ITEM_BACK_P(_T(bSettings?MSG_SETTINGS:MSG_BACK)); // i.e. default menu-item / menu-item after checking mismatch
-
+#ifdef STEEL_SHEET
     MENU_ITEM_SUBMENU_P(_i("Steel sheets"), sheets_menu); ////MSG_STEEL_SHEETS c=18
+#endif
     SETTINGS_NOZZLE;
     MENU_ITEM_SUBMENU_P(_i("Checks"), lcd_checking_menu);
 
@@ -6839,11 +6844,11 @@ static void activate_calibrate_sheet()
     lcd_first_layer_calibration_reset();
 }
 
+#ifdef STEEL_SHEET
 static void lcd_sheet_menu()
 {
     MENU_BEGIN();
     MENU_ITEM_BACK_P(_i("Steel sheets")); ////MSG_STEEL_SHEETS c=18
-
 	if(eeprom_is_sheet_initialized(selected_sheet)){
 	    MENU_ITEM_SUBMENU_P(_i("Select"), change_sheet); //// c=18
 	}
@@ -6857,6 +6862,7 @@ static void lcd_sheet_menu()
 
     MENU_END();
 }
+#endif
 
 static void lcd_main_menu()
 {

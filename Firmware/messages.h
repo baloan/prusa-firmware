@@ -57,7 +57,9 @@ extern const char MSG_MENU_CALIBRATION[];
 extern const char MSG_NO[];
 extern const char MSG_NOZZLE[];
 extern const char MSG_PAPER[];
+#ifdef STEEL_SHEET
 extern const char MSG_PLACE_STEEL_SHEET[];
+#endif
 extern const char MSG_PLEASE_WAIT[];
 extern const char MSG_PREHEAT_NOZZLE[];
 extern const char MSG_PRESS_TO_UNLOAD[];
@@ -65,7 +67,9 @@ extern const char MSG_PRINT_ABORTED[];
 extern const char MSG_PULL_OUT_FILAMENT[];
 extern const char MSG_RECOVER_PRINT[];
 extern const char MSG_REFRESH[];
+#ifdef STEEL_SHEET
 extern const char MSG_REMOVE_STEEL_SHEET[];
+#endif
 extern const char MSG_RESUMING_PRINT[];
 extern const char MSG_SD_WORKDIR_FAIL[];
 extern const char MSG_SELFTEST_COOLING_FAN[];
@@ -87,7 +91,9 @@ extern const char MSG_AUTO_POWER[];
 extern const char MSG_SILENT[];
 extern const char MSG_NORMAL[];
 extern const char MSG_STEALTH[];
+#ifdef STEEL_SHEET
 extern const char MSG_STEEL_SHEET_CHECK[];
+#endif
 extern const char MSG_STOP_PRINT[];
 extern const char MSG_STOPPED[];
 extern const char MSG_TEMP_CALIBRATION[];
